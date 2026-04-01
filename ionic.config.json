@@ -1,0 +1,7 @@
+{
+  "name": "First store practice",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
