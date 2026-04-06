@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCardTitle, IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/angular/standalone';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, IonCardTitle, IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/angular/standalone';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './products.page.html',
   styleUrls: ['./products.page.scss'],
   standalone: true,
-  imports: [IonCardSubtitle, IonCardHeader, IonCard, IonCardTitle, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonCardSubtitle, IonCardHeader, IonCard, IonCardTitle, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ProductsPage implements OnInit {
   apiService = inject(ApiService);
@@ -29,10 +29,27 @@ export class ProductsPage implements OnInit {
 
   getCategory() {
     this.category = this.route.snapshot.paramMap.get('category') || '';
+    if (this.category) {
+      this.loadProductsByCategory();
+      return;
+    }
+
     this.loadProducts();
   }
 
   loadProducts() {
+    this.apiService.getProducts()
+      .subscribe({
+        next: (data) => {
+          this.products = data;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
+  }
+
+  loadProductsByCategory() {
     this.apiService.getProductsByCategory(this.category)
       .subscribe({
         next: (data) => {
